@@ -12,7 +12,7 @@ use Message;
 class EmailRelay extends \ExternalModules\AbstractExternalModule
 {
     const TOKEN_KEY = "email_relay_api_token";
-    public $token;
+    public $email_token;
     private $url;
 
     public function __construct()
@@ -23,17 +23,17 @@ class EmailRelay extends \ExternalModules\AbstractExternalModule
         global $project_id;
         if ($project_id) {
             self::log("Loading " . self::TOKEN_KEY . " for project $project_id");
-            $this->token = $this->getProjectSetting(self::TOKEN_KEY, $project_id);
+            $this->email_token = $this->getProjectSetting(self::TOKEN_KEY, $project_id);
         }
 
         self::log($this->PREFIX . " constructed $project_id");
     }
 
     public function redcap_module_project_enable($version, $project_id) {
-        if (empty($this->token)) {
+        if (empty($this->email_token)) {
             // Generate a random token for this project
-            $this->token = generateRandomHash(10);
-            $this->setProjectSetting(self::TOKEN_KEY, $this->token, $project_id);
+            $this->email_token = generateRandomHash(10);
+            $this->setProjectSetting(self::TOKEN_KEY, $this->email_token, $project_id);
         }
         // self::log($this->PREFIX . " " . $version . " was enabled for project $project_id");
     }
@@ -68,13 +68,13 @@ class EmailRelay extends \ExternalModules\AbstractExternalModule
     public function sendEmail() {
         global $project_id;
 
-        // Verify token
-        $token = empty($_POST['token']) ? null : $_POST['token'];
+        // Verify Email Token
+        $email_token = empty($_POST['email_token']) ? null : $_POST['email_token'];
 
-        self::log("t". $token, "o". $this->token);
-        if(empty($token) || $token != $this->token) {
+        self::log("t". $email_token, "o". $this->email_token);
+        if(empty($email_token) || $email_token != $this->email_token) {
             return array(
-                "error"=>"Invalid Token"
+                "error"=>"Invalid Email Token"
             );
         }
 
@@ -163,50 +163,6 @@ class EmailRelay extends \ExternalModules\AbstractExternalModule
         $ip_ip = ip2long($ip);
         $ip_ip_net = $ip_ip & $ip_mask;
         return ($ip_ip_net == $ip_net);
-    }
-
-
-
-    /**
-     * Validate that the provided token is valid
-     * @param $token
-     * @return bool
-     */
-    private static function validateIP() {
-        $ip = $_SERVER['REMOTE_ADDR'];
-
-        // Verify token is valid
-        $config = self::$config;
-
-        if (!isset($config['tokens'][$token])) {
-            // Invalid token
-            self::log("Invalid token: $token", "ERROR");
-            return false;
-        } else {
-            // Valid token
-            /*
-                "application": "stanford_profile",
-                "ip_cidr": "127.0.0.1/32",
-                "attributes": [
-                    "first_name","last_name","email","affiliation",
-                    "department","description","relationship"
-                ],
-                "override_cache_expiry_in_sec": "60"
-            */
-            $token_params = $config['tokens'][$token];
-
-            // Validate IP if specified
-            if (
-                !empty($token_params['ip_cidr']) &&
-                (SPLUtils::ipCIDRCheck($token_params['ip_cidr']) === false)
-            ) {
-                // Failed CIDR IP CHECK
-                self::log("Lookup does not match IP filter");
-                return false;
-            }
-            self::log("Token validated for " . $token_params['application']);
-            return $token_params;
-        }
     }
 
 

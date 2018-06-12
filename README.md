@@ -6,7 +6,7 @@ Each email sent is logged to the REDCap project logs (and optionally to the spec
 ### Security
 Two security mechanisms are in place to try and control access to this API
 
-##### Tokens
+##### Email Tokens
 Each project uses a unique token as a shared key to authenticate against the relay endpoint.  It does not use the normal REDCap API user tokens.
 
 ##### IP Filters
@@ -19,15 +19,15 @@ This module must be enabled on a specific REDCap project.  It will then generate
 ### Example Syntax
 The following parameters are valid in the body of the POST
 
-    token:      ##RANDOM## (this token is unique to this project)
-    to:         A comma-separated list of valid email addresses (no names)
-    from_name:  Jane Doe
-    from_email: Jane@doe.com
-    cc:         (optional) comma-separated list of valid emails
-    bcc:        (optional) comma-separated list of valid emails
-    subject:    A Subject
-    body:       A Message Body (<b>html</b> is okay!)
-    record_id:  (optional) a record_id in the project - email will be logged to this record
+    email_token: ##RANDOM## (this token is unique to this project)
+    to:          A comma-separated list of valid email addresses (no names)
+    from_name:   Jane Doe
+    from_email:  Jane@doe.com
+    cc:          (optional) comma-separated list of valid emails
+    bcc:         (optional) comma-separated list of valid emails
+    subject:     A Subject
+    body:        A Message Body (<b>html</b> is okay!)
+    record_id:   (optional) a record_id in the project - email will be logged to this record
 
 The API will return a json object with either `result: true|false` or `error: error message`
 

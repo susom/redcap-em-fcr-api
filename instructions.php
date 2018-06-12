@@ -11,7 +11,7 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
     <p>
     This module allows you to create a project-specific API url that can be used for relaying email messages from an
         outside system (such as a GCP/Amazon project.  It does not use the normal REDCap API tokens but a project
-        specific token that was generated when the module was activated on this project.
+        specific email token that was generated when the module was activated on this project.
     </p>
     <p>
         Each email sent is logged to the REDCap project logs (and optionally to the specified record)
@@ -31,15 +31,15 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 The following parameters are valid in the body of the POST
 </p>
 <pre>
-    token:      <?php echo $module->token; ?> (this token is unique to this project)
-    to:         A comma-separated list of valid email addresses (no names)
-    from_name:  Jane Doe
-    from_email: Jane@doe.com
-    cc:         (optional) comma-separated list of valid emails
-    bcc:        (optional) comma-separated list of valid emails
-    subject:    A Subject
-    body:       A Message Body (<?php echo htmlentities("<b>html</b>") ?> is okay!)
-    record_id:  (optional) a record_id in the project - email will be logged to this record
+    email_token: <?php echo $module->token; ?> (this token is unique to this project)
+    to:          A comma-separated list of valid email addresses (no names)
+    from_name:   Jane Doe
+    from_email:  Jane@doe.com
+    cc:          (optional) comma-separated list of valid emails
+    bcc:         (optional) comma-separated list of valid emails
+    subject:     A Subject
+    body:        A Message Body (<?php echo htmlentities("<b>html</b>") ?> is okay!)
+    record_id:   (optional) a record_id in the project - email will be logged to this record
 </pre>
 <br>
 
