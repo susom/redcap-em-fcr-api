@@ -14,12 +14,16 @@
       "name": "Andy Martin",
       "email": "andy123@stanford.edu",
       "institution": "Stanford University"
+    },
+    {
+      "name": "Irvin Szeto",
+      "email": "irvins@stanford.edu",
+      "institution": "Stanford University"
     }
   ],
 
   "permissions": [
-    "redcap_module_project_enable",
-    "redcap_module_project_disable"
+    "redcap_module_project_enable"
   ],
 
   "links": {
@@ -40,18 +44,18 @@
   "project-settings": [
     {
       "key": "instruction",
-      "name": "After you have configured your ip whitelist for email relay in this project, you can view the email relay URL on the project setup page.",
+      "name": "It is strongly recommended that you configure the IP address range of your servers that will use this module.  Enter one or more IP filters below",
       "type": "descriptive"
     },
     {
       "key": "ip_whitelist",
-      "name": "External Access to this can be provided via a public API url.  Only allowed IPs can use this API",
+      "name": "IP Whitelist",
       "type": "sub_settings",
       "repeatable": true,
       "sub_settings": [
         {
           "key": "ip",
-          "name": "<b>IP</b><br>CIDR Notation (e.g. 123.4.5.6/24)",
+          "name": "IP address or CIDR notation (e.g. 192.168.123.1/24)",
           "required": true,
           "type": "text"
         }
