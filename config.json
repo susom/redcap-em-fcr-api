@@ -3,7 +3,7 @@
 
   "namespace":"Stanford\\EmailRelay",
 
-  "description": "A module for looking up people at Stanford",
+  "description": "A module that creates project-specific json-api endpoints for sending emails through REDCap's message class",
 
   "versions": [
     { "0.1": "Initial Development Version" }
