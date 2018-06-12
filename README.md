@@ -1,15 +1,22 @@
 # Email Relay API Instructions
-This module allows you to create a project-specific API url that can be used for relaying email messages from an outside system (such as a GCP/Amazon project. It does not use the normal REDCap API tokens but a project specific token that was generated when the module was activated on this project.
+This module allows you to create a project-specific API url that can be used for relaying email messages from an outside system (such as a GCP/Amazon project. 
 
 Each email sent is logged to the REDCap project logs (and optionally to the specified record)
 
+### Security
+Two security mechanisms are in place to try and control access to this API
 
-### Endpoint
-You must send a 'POST' request to the following url to initiate an email:
+##### Tokens
+Each project uses a unique token as a shared key to authenticate against the relay endpoint.  It does not use the normal REDCap API user tokens.
 
-http://your_server/api/?type=module&prefix=email_relay&id=xx&page=service&pid=yy
+##### IP Filters
+IP Filters can be created when configuring the module for a given project.  You can use either an static IP or a range of IPs using CIDR notation.  If configured, only these IP addresses will be able to use the API.
 
-### Example
+
+### Project-Specific API Endpoint
+This module must be enabled on a specific REDCap project.  It will then generate a unique endpoint url that will serve as your email replay endpoint.  You can then send a POST request to the endpoint to initiate an email.  The url will be visible on the 'Instructions' link that appears after activating the module on a project.
+
+### Example Syntax
 The following parameters are valid in the body of the POST
 
     token:      ##RANDOM## (this token is unique to this project)
@@ -22,8 +29,7 @@ The following parameters are valid in the body of the POST
     body:       A Message Body (<b>html</b> is okay!)
     record_id:  (optional) a record_id in the project - email will be logged to this record
 
-### IP Filters
-IP Filters can be created using CIDR notation to futher restrict access to this api url
+The API will return a json object with either `result: true|false` or `error: error message`
 
 ### Misc
 At this point attachments are not supported.
