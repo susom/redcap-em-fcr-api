@@ -1,0 +1,61 @@
+{
+  "name": "Email Relay API Service",
+
+  "namespace":"Stanford\\EmailRelay",
+
+  "description": "A module for looking up people at Stanford",
+
+  "versions": [
+    { "0.1": "Initial Development Version" }
+  ],
+
+  "authors": [
+    {
+      "name": "Andy Martin",
+      "email": "andy123@stanford.edu",
+      "institution": "Stanford University"
+    }
+  ],
+
+  "permissions": [
+    "redcap_module_project_enable",
+    "redcap_module_project_disable"
+  ],
+
+  "links": {
+    "control-center": [
+    ],
+    "project": [
+      {
+        "name": "Email Relay Instructions",
+        "icon": "gear",
+        "url": "instructions.php"
+      }
+    ]
+  },
+
+  "system-settings": [
+  ],
+
+  "project-settings": [
+    {
+      "key": "instruction",
+      "name": "After you have configured your ip whitelist for email relay in this project, you can view the email relay URL on the project setup page.",
+      "type": "descriptive"
+    },
+    {
+      "key": "ip_whitelist",
+      "name": "External Access to this can be provided via a public API url.  Only allowed IPs can use this API",
+      "type": "sub_settings",
+      "repeatable": true,
+      "sub_settings": [
+        {
+          "key": "ip",
+          "name": "<b>IP</b><br>CIDR Notation (e.g. 123.4.5.6/24)",
+          "required": true,
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
