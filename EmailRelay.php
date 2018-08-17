@@ -22,11 +22,11 @@ class EmailRelay extends \ExternalModules\AbstractExternalModule
         // If in project context, load the object
         global $project_id;
         if ($project_id) {
-            self::log("Loading " . self::TOKEN_KEY . " for project $project_id");
+            self::emLog("Loading " . self::TOKEN_KEY . " for project $project_id");
             $this->email_token = $this->getProjectSetting(self::TOKEN_KEY, $project_id);
         }
 
-        self::log($this->PREFIX . " constructed $project_id");
+        self::emLog($this->PREFIX . " constructed $project_id");
     }
 
     public function redcap_module_project_enable($version, $project_id) {
@@ -71,7 +71,7 @@ class EmailRelay extends \ExternalModules\AbstractExternalModule
         // Verify Email Token
         $email_token = empty($_POST['email_token']) ? null : $_POST['email_token'];
 
-        self::log("t". $email_token, "o". $this->email_token);
+        self::emLog("t". $email_token, "o". $this->email_token);
         if(empty($email_token) || $email_token != $this->email_token) {
             return array(
                 "error"=>"Invalid Email Token"
@@ -166,9 +166,23 @@ class EmailRelay extends \ExternalModules\AbstractExternalModule
     }
 
 
-    // Log Wrapper
-    public static function log() {
-        if (class_exists("\Plugin")) call_user_func_array("\Plugin::log", func_get_args());
+    function emLog() {
+        $emLogger = \ExternalModules\ExternalModules::getModuleInstance('em_logger');
+        $emLogger->log($this->PREFIX, func_get_args(), "INFO");
     }
+
+    function emDebug() {
+        // Check if debug enabled
+        if ($this->getSystemSetting('enable-system-debug-logging') || $this->getProjectSetting('enable-project-debug-logging')) {
+            $emLogger = \ExternalModules\ExternalModules::getModuleInstance('em_logger');
+            $emLogger->log($this->PREFIX, func_get_args(), "DEBUG");
+        }
+    }
+
+    function emError() {
+        $emLogger = \ExternalModules\ExternalModules::getModuleInstance('em_logger');
+        $emLogger->log($this->PREFIX, func_get_args(), "ERROR");
+    }
+
 
 }
