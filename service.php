@@ -1,6 +1,6 @@
 <?php
-namespace Stanford\EmailRelay;
-/** @var \Stanford\EmailRelay\EmailRelay $module */
+namespace Stanford\TokenRelay;
+/** @var \Stanford\TokenRelay\TokenRelay $module */
 
 echo $module::emLog($_REQUEST, "Incoming Request");
 $result = $module->sendEmail();

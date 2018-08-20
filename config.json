@@ -1,20 +1,15 @@
 {
-  "name": "Email Relay API Service",
+  "name": "Token Relay API Service",
 
-  "namespace":"Stanford\\EmailRelay",
+  "namespace":"Stanford\\TokenRelay",
 
-  "description": "A module that creates project-specific json-api endpoints for sending emails through REDCap's message class",
+  "description": "A module that takes pregen Participant Id's and assign appropriate REDCap API Tokens",
 
   "versions": [
     { "0.1": "Initial Development Version" }
   ],
 
   "authors": [
-    {
-      "name": "Andy Martin",
-      "email": "andy123@stanford.edu",
-      "institution": "Stanford University"
-    },
     {
       "name": "Irvin Szeto",
       "email": "irvins@stanford.edu",
@@ -31,7 +26,7 @@
     ],
     "project": [
       {
-        "name": "Email Relay Instructions",
+        "name": "Token Relay Instructions",
         "icon": "gear",
         "url": "instructions.php"
       }
@@ -48,25 +43,6 @@
   ],
 
   "project-settings": [
-    {
-      "key": "instruction",
-      "name": "It is strongly recommended that you configure the IP address range of your servers that will use this module.  Enter one or more IP filters below",
-      "type": "descriptive"
-    },
-    {
-      "key": "ip_whitelist",
-      "name": "IP Whitelist",
-      "type": "sub_settings",
-      "repeatable": true,
-      "sub_settings": [
-        {
-          "key": "ip",
-          "name": "IP address or CIDR notation (e.g. 192.168.123.1/24)",
-          "required": true,
-          "type": "text"
-        }
-      ]
-    },
     {
       "key": "enable-project-debug-logging",
       "name": "<b>Enable Debug Logging</b>",
