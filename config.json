@@ -1,7 +1,7 @@
 {
-  "name": "Token Relay API Service",
+  "name": "FCR Token Relay API Service",
 
-  "namespace":"Stanford\\TokenRelay",
+  "namespace":"Stanford\\FCRApi",
 
   "description": "A module that takes pregen Participant Id's and assign appropriate REDCap API Tokens",
 
@@ -17,16 +17,24 @@
     }
   ],
 
+  "no-auth-pages": [
+    "service"
+  ],
+
   "permissions": [
-    "redcap_module_project_enable"
   ],
 
   "links": {
     "control-center": [
+      {
+        "name": "FCR API App Config",
+        "icon": "gear",
+        "url": "app_config.php"
+      }
     ],
     "project": [
       {
-        "name": "Token Relay Instructions",
+        "name": "FCR API Instructions",
         "icon": "gear",
         "url": "instructions.php"
       }

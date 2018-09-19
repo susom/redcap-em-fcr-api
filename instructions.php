@@ -1,33 +1,46 @@
 <?php
-namespace Stanford\TokenRelay;
-/** @var \Stanford\EmailRelay\TokenRelay $module */
+namespace Stanford\FCRApi;
+/** @var \Stanford\EmailRelay\FCRApi $module */
 
 
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
+$participant_form = $module->getUrl("participant_info.zip");
+$sessions_form = $module->getUrl("sessions.zip");
+
 ?>
 
-<h3>Token Relay API Instructions</h3>
-    <p>
-    This module allows you to create a stand alone API url that can be used for assigning API Tokens to other REDcap projects
-    </p>
-<br>
+<h3>These are user instructions for the FCR API app</h3>
 
-<h4>Endpoint</h4>
 <p>
-    You must send a 'POST' request to the following url to aquire a Token:
+    You can download the proper instruments to have in your project here:
 </p>
-<pre>
-<?php echo $module->getProjectUrl($project_id) ?>
-</pre>
-<br>
-<h4>Example</h4>
+<div>
+    <?php echo "<a href='$participant_form'>participant_info.zip</a>" ?>
+</div>
+<div>
+    <?php echo "<a href='$sessions_form'>sessions.zip</a>" ?>
+</div>
 <p>
-The following parameters are valid in the body of the POST
+    Ensure that sessions is configured as a repeating instrument and that the project is NOT longitudinal.
 </p>
-<pre>
-    participant_id: Pregenerated
-    passcode:       # Code
-</pre>
-<br>
 
+
+
+<?php
+if (\REDCap::isLongitudinal()) {
+    ?>
+    <div class="alert alert-danger">
+        This project is currently longitudinal and this plugin will not work correctly!
+    </div>
+    <?php
+}
+
+if (\REDCap::getRecordIdField() !== "id") {
+    ?>
+    <div class="alert alert-danger">
+        The record id field for this project must be called 'id' - please rename it.
+    </div>
+    <?php
+}
+?>
