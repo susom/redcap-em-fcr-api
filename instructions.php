@@ -11,7 +11,7 @@ $sessions_form = $module->getUrl("sessions.zip");
 ?>
 
 <h3>These are user instructions for the FCR API app</h3>
-
+<?php echo $module->getProjectUrl($project_id) ?>
 <p>
     You can download the proper instruments to have in your project here:
 </p>

@@ -54,7 +54,7 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
     public function parseInput() {
         $this->participant_id = isset($_POST['participant_id']) ? strtoupper(trim($_POST['participant_id'])) : NULL ;
         $this->passcode =       isset($_POST['passcode'])       ? trim($_POST['passcode']) : NULL ;
-        $this->action =         isset($_POST['participant_id']) ? strtoupper(trim($_POST['action'])) : NULL ;
+        $this->action =         isset($_POST['action'])         ? strtoupper(trim($_POST['action'])) : NULL ;
         $this->data =           isset($_POST['data'])           ? json_decode($_POST['data'],true) : NULL ;     // JSON STRING
 
         $valid = (is_null($this->participant_id) || is_null($this->passcode) || is_null($this->action)) ? false : true;
@@ -90,16 +90,15 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
                 break;
             case "SAVEDATA":
                 if (is_null($this->data)) $this->returnError("Missing data: " . $this->participant_id);
-                $this->data['id'] = $this->current_record;
+                $this->data['id']                       = $this->current_record;
                 $this->data['redcap_repeat_instrument'] = 'sessions';
-                $this->data['redcap_repeat_instance'] = $this->getNextInstanceId();
+                $this->data['redcap_repeat_instance']   = $this->getNextInstanceId();
 
                 $this->emDebug("SaveData", $this->data);
                 $result = REDCap::saveData($this->current_project, 'json', json_encode(array($this->data)));
                 break;
             default:
                 $result = array("error"=>"Unknown action: " . $this->action);
-
         }
 
         // Return result
