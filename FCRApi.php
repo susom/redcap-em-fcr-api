@@ -90,7 +90,7 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
                 break;
             case "SAVEDATA":
                 if (is_null($this->data)) $this->returnError("Missing data: " . $this->participant_id);
-                $this->data['id']                       = $this->current_record;
+                $this->data['id']                       = $this->participant_id;
                 $this->data['redcap_repeat_instrument'] = 'sessions';
                 $this->data['redcap_repeat_instance']   = $this->getNextInstanceId();
 
