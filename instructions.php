@@ -4,14 +4,17 @@ namespace Stanford\FCRApi;
 
 
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
-
-$participant_form = $module->getUrl("participant_info.zip");
-$sessions_form = $module->getUrl("sessions.zip");
-
+$participant_form = $module->getUrl("ParticipantInfo.zip");
+$sessions_form = $module->getUrl("SessionData.zip");
+$XML_PROJECT_TEMPLATE = $module->getUrl("FCR_PROJECT_AppData.REDCap.xml");
 ?>
 
 <h3>These are user instructions for the FCR API app</h3>
-<?php echo $module->getProjectUrl($project_id) ?>
+<p>This is the API URL
+<pre>
+    <?php echo $module->getProjectUrl($project_id) ?>
+</pre>
+</p>
 <p>
     You can download the proper instruments to have in your project here:
 </p>
@@ -24,8 +27,12 @@ $sessions_form = $module->getUrl("sessions.zip");
 <p>
     Ensure that sessions is configured as a repeating instrument and that the project is NOT longitudinal.
 </p>
-
-
+<p>
+    Or use the following XML to create a project with all the instruments and settings set up already
+</p>
+<div>
+    <?php echo "<a href='$XML_PROJECT_TEMPLATE'>FCR Redcap Project Template</a>" ?>
+</div>
 
 <?php
 if (\REDCap::isLongitudinal()) {
