@@ -52,10 +52,10 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
      * @return bool request valid
      */
     public function parseInput() {
-        $this->participant_id = isset($_POST['participant_id']) ? strtoupper(trim($_POST['participant_id'])) : NULL ;
-        $this->passcode =       isset($_POST['passcode'])       ? trim($_POST['passcode']) : NULL ;
-        $this->action =         isset($_POST['action'])         ? strtoupper(trim($_POST['action'])) : NULL ;
-        $this->data =           isset($_POST['data'])           ? json_decode($_POST['data'],true) : NULL ;     // JSON STRING
+        $this->participant_id   = isset($_POST['participant_id']) ? strtoupper(trim($_POST['participant_id'])) : NULL ;
+        $this->passcode         = isset($_POST['passcode'])       ? trim($_POST['passcode']) : NULL ;
+        $this->action           = isset($_POST['action'])         ? strtoupper(trim($_POST['action'])) : NULL ;
+        $this->data             = isset($_POST['data'])           ? json_decode($_POST['data'],1) : NULL ;     // JSON STRING
 
         $valid = (is_null($this->participant_id) || is_null($this->passcode) || is_null($this->action)) ? false : true;
         $this->emDebug($valid);
@@ -89,9 +89,9 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
                 $result = $this->current_record;
                 break;
             case "SAVEDATA":
-                if (is_null($this->data)) $this->returnError("Missing data: " . $this->participant_id);
+                if (is_null($this->data)) $this->returnError("Missing data for" . $this->participant_id);
                 $this->data['id']                       = $this->participant_id;
-                $this->data['redcap_repeat_instrument'] = 'sessions';
+                $this->data['redcap_repeat_instrument'] = 'session_data';
                 $this->data['redcap_repeat_instance']   = $this->getNextInstanceId();
 
                 $this->emDebug("SaveData", $this->data);
