@@ -29,24 +29,24 @@ require APP_PATH_DOCROOT . "ControlCenter/header.php";
 <?php
 
 
-$results = \REDCap::getData(20,'json');
-print "<code>" . print_r($results,true). "</code>";
-
-
-$data = json_encode(
-    array(
-            array(
-                'id' => '123',
-                'device_id' => 'c dev',
-                'duration' => 'c dur',
-                'start_time' => 'c start_time',
-                'end_time' => 'c end_time',
-                "redcap_repeat_instrument" => "sessions",
-                "redcap_repeat_instance" => "4"
-            )
-    )
-);
-
-print $data;
+// $results = \REDCap::getData(20,'json');
+// print "<code>" . print_r($results,true). "</code>";
+//
+//
+// $data = json_encode(
+//     array(
+//             array(
+//                 'id' => '123',
+//                 'device_id' => 'c dev',
+//                 'duration' => 'c dur',
+//                 'start_time' => 'c start_time',
+//                 'end_time' => 'c end_time',
+//                 "redcap_repeat_instrument" => "sessions",
+//                 "redcap_repeat_instance" => "4"
+//             )
+//     )
+// );
+//
+// print $data;
 
 //$result = REDCap::saveData($this->current_project, 'json', $this->data);
