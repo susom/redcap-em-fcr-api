@@ -52,6 +52,9 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
      * @return bool request valid
      */
     public function parseInput() {
+
+        $this->emDebug("Incoming POST: ", $_POST);
+
         $this->participant_id   = isset($_POST['participant_id']) ? strtoupper(trim($_POST['participant_id'])) : NULL ;
         $this->passcode         = isset($_POST['passcode'])       ? trim($_POST['passcode']) : NULL ;
         $this->action           = isset($_POST['action'])         ? strtoupper(trim($_POST['action'])) : NULL ;
@@ -183,9 +186,9 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
      */
     public function getCurrentProject() {
         foreach ($this->enabledProjects as $pid => $project_data) {
-            $q = \REDCap::getData($pid, 'json', $this->participant_id, array('id','pw','alias','deactivate'));
+            $q = REDCap::getData($pid, 'json', $this->participant_id, array('id','pw','alias','deactivate'));
             $results = json_decode($q,true);
-            $this->emLog($results);
+            $this->emLog("Query for " . $this->participant_id . " in project " . $pid, $results);
             foreach ($results as $result) {
                 if ($result['id'] == $this->participant_id && $result['pw'] == $this->passcode) {
                     $this->emDebug("Found a match", $this->participant_id, $this->passcode);

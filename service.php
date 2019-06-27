@@ -10,12 +10,5 @@ if (! $module->parseInput()) {
     $module->returnError("Invalid Request Parameters - check your syntax");
 }
 
-$result = $module->doAction();
-
-
-
-
-
-
-//header("Content-type: application/json");
-//echo json_encode($result);
+// Response is handled by $module
+$module->doAction();
