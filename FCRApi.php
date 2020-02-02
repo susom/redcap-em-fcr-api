@@ -163,7 +163,8 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
     public function getEnabledProjects() {
         $enabledProjects = array();
         $projects = \ExternalModules\ExternalModules::getEnabledProjects($this->PREFIX);
-        while($project = db_fetch_assoc($projects)){
+        //while($project = db_fetch_assoc($projects)){
+        while($project = $projects->fetch_assoc()){
             $pid  = $project['project_id'];
             $name = $project['name'];
             $url  = APP_PATH_WEBROOT . 'ProjectSetup/index.php?pid=' . $project['project_id'];
