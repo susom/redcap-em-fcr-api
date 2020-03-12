@@ -55,9 +55,9 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
 
         $this->emDebug("Incoming POST: ", $_POST);
 
-        $this->participant_id   = isset($_POST['participant_id']) ? strtoupper(trim($_POST['participant_id'])) : NULL ;
-        $this->passcode         = isset($_POST['passcode'])       ? trim($_POST['passcode']) : NULL ;
-        $this->action           = isset($_POST['action'])         ? strtoupper(trim($_POST['action'])) : NULL ;
+        $this->participant_id   = isset($_POST['participant_id']) ? strtoupper(trim(filter_var( $_POST['participant_id'], FILTER_SANITIZE_STRING ))) : NULL ;
+        $this->passcode         = isset($_POST['passcode'])       ? trim( filter_var($_POST['passcode'], FILTER_SANITIZE_STRING) ) : NULL ;
+        $this->action           = isset($_POST['action'])         ? strtoupper(trim( filter_var($_POST['action'], FILTER_SANITIZE_STRING))) : NULL ;
         $this->data             = isset($_POST['data'])           ? json_decode($_POST['data'],1) : NULL ;     // JSON STRING
 
         $valid = (is_null($this->participant_id) || is_null($this->passcode) || is_null($this->action)) ? false : true;
@@ -85,14 +85,13 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
         if (! $this->getCurrentProject())   $this->returnError("Unable to find an active project for participant: " . $this->participant_id);
         if (! $this->activeUser())          $this->returnError("User is inactive: " . $this->participant_id);
 
-
         switch($this->action) {
             case "VERIFY":
                 REDCap::logEvent($this->PREFIX, $this->action, NULL, $this->participant_id, NULL, $this->current_project);
                 $result = $this->current_record;
                 break;
             case "SAVEDATA":
-                if (is_null($this->data)) $this->returnError("Missing data for" . $this->participant_id);
+                if (is_null($this->data)) $this->returnError("Missing data for " . $this->participant_id);
                 $this->data['id']                       = $this->participant_id;
                 $this->data['redcap_repeat_instrument'] = 'session_data';
                 $this->data['redcap_repeat_instance']   = $this->getNextInstanceId();
@@ -189,9 +188,9 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
         foreach ($this->enabledProjects as $pid => $project_data) {
             $q = REDCap::getData($pid, 'json', $this->participant_id, array('id','pw','alias','deactivate'));
             $results = json_decode($q,true);
-            $this->emLog("Query for " . $this->participant_id . " in project " . $pid, $results);
+            $this->emDebug("Query for " . $this->participant_id . " in project " . $pid . " with " . count($results) . " results");
             foreach ($results as $result) {
-                if ($result['id'] == $this->participant_id && $result['pw'] == $this->passcode) {
+                if (strtoupper($result['id']) == $this->participant_id && strtoupper($result['pw']) == strtoupper($this->passcode)) {
                     $this->emDebug("Found a match", $this->participant_id, $this->passcode);
                     $this->current_record = $result;
                     $this->current_project = $pid;

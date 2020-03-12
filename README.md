@@ -37,7 +37,7 @@ To save data:
     "participant_id": "xxx",
     "passcode"      : "yyy",
     "action"        : "SAVEDATA",
-    "data"          : [[{ "key": "value" }]]
+    "data"          : { "key": "value", "key2": "value" }
 }
 
 Returns 
@@ -45,9 +45,6 @@ Returns
 OR Record Data
 TRUE
 ```
-
-
-
 
 
 The following parameters are valid in the body of the POST
