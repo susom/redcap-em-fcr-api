@@ -127,7 +127,7 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
     }
 
     public function getProjectUrl($project_id) {
-        $url = $this->getUrl("service",true, true);
+        $url = $this->getUrl("service.php",true, true);
         $url .= "&pid=" . $project_id;
         return $url;
     }

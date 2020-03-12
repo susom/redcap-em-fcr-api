@@ -2,7 +2,6 @@
 namespace Stanford\FCRApi;
 /** @var \Stanford\FCRApi\FCRApi $module */
 
-
 require APP_PATH_DOCROOT . "ControlCenter/header.php";
 
 ?>
@@ -17,9 +16,7 @@ require APP_PATH_DOCROOT . "ControlCenter/header.php";
 <p>
     Please configure the mobile app to use the following url:
 </p>
-<pre>
-<?php echo $module->getUrl("service.php",true, true ) ?>
-</pre>
+<pre><?php echo $module->getUrl("service.php",true, true ) ?></pre>
 <br>
 <h4>Enabled Projects</h4>
 <div>
