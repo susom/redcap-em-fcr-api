@@ -20,6 +20,12 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
     private $current_project;       // PID
     private $current_record;   // Array of record data
 
+    const MAX_FAILED_ATTEMPTS   = 10;
+    const LOCKOUT_WINDOW_SECONDS = 900; // 15 minutes
+
+    // Fields the mobile app actually sends for SAVEDATA - anything else is dropped
+    const SAVEDATA_ALLOWED_FIELDS = array('device_id', 'duration', 'start_time', 'end_time');
+
     public function __construct($project_id = null)
     {
         parent::__construct();
@@ -80,24 +86,36 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
 
     public function doAction() {
 
+        if ($this->isLockedOut()) {
+            $this->returnError("Too many attempts for participant: " . $this->participant_id);
+        }
+
         // Make sure user is valid and set project info
         $this->getEnabledProjects();
-        if (! $this->getCurrentProject())   $this->returnError("Unable to find an active project for participant: " . $this->participant_id);
+        if (! $this->getCurrentProject()) {
+            $this->registerFailedAttempt();
+            $this->returnError("Unable to find an active project for participant: " . $this->participant_id);
+        }
+        $this->clearFailedAttempts();
         if (! $this->activeUser())          $this->returnError("User is inactive: " . $this->participant_id);
 
         switch($this->action) {
             case "VERIFY":
                 REDCap::logEvent($this->PREFIX, $this->action, NULL, $this->participant_id, NULL, $this->current_project);
                 $result = $this->current_record;
+                unset($result['pw']);
                 break;
             case "SAVEDATA":
                 if (is_null($this->data)) $this->returnError("Missing data for " . $this->participant_id);
-                $this->data['id']                       = $this->participant_id;
-                $this->data['redcap_repeat_instrument'] = 'session_data';
-                $this->data['redcap_repeat_instance']   = $this->getNextInstanceId();
+                $sanitizedData = is_array($this->data)
+                    ? array_intersect_key($this->data, array_flip(self::SAVEDATA_ALLOWED_FIELDS))
+                    : array();
+                $sanitizedData['id']                       = $this->participant_id;
+                $sanitizedData['redcap_repeat_instrument'] = 'session_data';
+                $sanitizedData['redcap_repeat_instance']   = $this->getNextInstanceId();
 
-                $this->emDebug("SaveData", $this->data);
-                $result = REDCap::saveData($this->current_project, 'json', json_encode(array($this->data)));
+                $this->emDebug("SaveData", $sanitizedData);
+                $result = REDCap::saveData($this->current_project, 'json', json_encode(array($sanitizedData)));
                 break;
             default:
                 $result = array("error"=>"Unknown action: " . $this->action);
@@ -106,6 +124,39 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
         // Return result
         header("Content-type: application/json");
         echo json_encode($result);
+    }
+
+    /**
+     * Per-participant lockout to slow down credential guessing, since this
+     * endpoint has no server-level authentication in front of it.
+     */
+    private function getLockoutKey() {
+        return "lockout_" . md5($this->participant_id);
+    }
+
+    private function isLockedOut() {
+        $attempts = json_decode($this->getSystemSetting($this->getLockoutKey()), true);
+        if (!is_array($attempts)) return false;
+
+        $cutoff = time() - self::LOCKOUT_WINDOW_SECONDS;
+        $recent = array_filter($attempts, function($t) use ($cutoff) { return $t >= $cutoff; });
+
+        return count($recent) >= self::MAX_FAILED_ATTEMPTS;
+    }
+
+    private function registerFailedAttempt() {
+        $attempts = json_decode($this->getSystemSetting($this->getLockoutKey()), true);
+        if (!is_array($attempts)) $attempts = array();
+
+        $cutoff = time() - self::LOCKOUT_WINDOW_SECONDS;
+        $attempts = array_values(array_filter($attempts, function($t) use ($cutoff) { return $t >= $cutoff; }));
+        $attempts[] = time();
+
+        $this->setSystemSetting($this->getLockoutKey(), json_encode($attempts));
+    }
+
+    private function clearFailedAttempts() {
+        $this->setSystemSetting($this->getLockoutKey(), null);
     }
 
     /**
@@ -190,7 +241,7 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
             $results = json_decode($q,true);
             $this->emDebug("Query for " . $this->participant_id . " in project " . $pid . " with " . count($results) . " results");
             foreach ($results as $result) {
-                if (strtoupper($result['id']) == $this->participant_id && strtoupper($result['pw']) == strtoupper($this->passcode)) {
+                if (hash_equals(strtoupper($result['id']), $this->participant_id) && hash_equals(strtoupper($result['pw']), strtoupper($this->passcode))) {
                     $this->emDebug("Found a match", $this->participant_id, $this->passcode);
                     $this->current_record = $result;
                     $this->current_project = $pid;

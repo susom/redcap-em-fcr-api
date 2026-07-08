@@ -9,6 +9,8 @@
     { "0.1": "Initial Development Version" }
   ],
 
+  "framework-version": 5,
+
   "authors": [
     {
       "name": "Irvin Szeto",
