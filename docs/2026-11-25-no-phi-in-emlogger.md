@@ -11,8 +11,8 @@
 
 ## Fix
 
-- `service.php` emDebugs only the action.
-- `parseInput()` logs the POST keys.
+- `service.php` emDebugs only the action, as a fixed label (`VERIFY`, `SAVEDATA`, or `other`), because the value is caller input logged before authentication.
+- `parseInput()` logs which known parameters are present, plus a count of any others. Keys are caller input too (both tightened after code review; a request with text hidden in `action` and in an extra key logs neither).
 - The match/mismatch lines log the participant id only.
 - SaveData logs the field names.
 

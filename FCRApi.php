@@ -59,7 +59,10 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
      */
     public function parseInput() {
 
-        $this->emDebug("Incoming POST with keys: " . implode(",", array_keys($_POST)));
+        // Keys are caller input too: report which known parameters are present, and only a count of others.
+        $known = array_intersect(['participant_id', 'passcode', 'action', 'data'], array_keys($_POST));
+        $this->emDebug("Incoming POST with parameters: " . implode(",", $known)
+            . " (+" . (count($_POST) - count($known)) . " other)");
 
         $this->participant_id   = isset($_POST['participant_id']) ? strtoupper(trim(filter_var( $_POST['participant_id'], FILTER_SANITIZE_STRING ))) : NULL ;
         $this->passcode         = isset($_POST['passcode'])       ? trim( filter_var($_POST['passcode'], FILTER_SANITIZE_STRING) ) : NULL ;
