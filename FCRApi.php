@@ -59,7 +59,7 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
      */
     public function parseInput() {
 
-        $this->emDebug("Incoming POST: ", $_POST);
+        $this->emDebug("Incoming POST with keys: " . implode(",", array_keys($_POST)));
 
         $this->participant_id   = isset($_POST['participant_id']) ? strtoupper(trim(filter_var( $_POST['participant_id'], FILTER_SANITIZE_STRING ))) : NULL ;
         $this->passcode         = isset($_POST['passcode'])       ? trim( filter_var($_POST['passcode'], FILTER_SANITIZE_STRING) ) : NULL ;
@@ -114,7 +114,7 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
                 $sanitizedData['redcap_repeat_instrument'] = 'session_data';
                 $sanitizedData['redcap_repeat_instance']   = $this->getNextInstanceId();
 
-                $this->emDebug("SaveData", $sanitizedData);
+                $this->emDebug("SaveData fields: " . implode(",", array_keys($sanitizedData)));
                 $result = REDCap::saveData($this->current_project, 'json', json_encode(array($sanitizedData)));
                 break;
             default:
@@ -242,12 +242,13 @@ class FCRApi extends \ExternalModules\AbstractExternalModule
             $this->emDebug("Query for " . $this->participant_id . " in project " . $pid . " with " . count($results) . " results");
             foreach ($results as $result) {
                 if (hash_equals(strtoupper($result['id']), $this->participant_id) && hash_equals(strtoupper($result['pw']), strtoupper($this->passcode))) {
-                    $this->emDebug("Found a match", $this->participant_id, $this->passcode);
+                    $this->emDebug("Found a match", $this->participant_id);
                     $this->current_record = $result;
                     $this->current_project = $pid;
                     return true;
                 }
-                $this->emDebug("Got a record, but didn't match", $this->participant_id, $this->passcode, $result);
+                // Not the passcode or $result: the record holds the stored pw.
+                $this->emDebug("Got a record, but didn't match", $this->participant_id);
             }
         }
         return false;
